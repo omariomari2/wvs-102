@@ -17,7 +17,7 @@ export class AIChatService {
     try {
       const prompt = CHAT_PROMPT_TEMPLATE(scanResults, userMessage, chatHistory);
       
-      const response = await this.ai.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+			const aiResult: any = await this.ai.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast' as any, {
         messages: [
           {
             role: 'user',
@@ -28,7 +28,8 @@ export class AIChatService {
         temperature: 0.7
       });
 
-      return response.response || 'I apologize, but I was unable to generate a response. Please try again.';
+			const textResponse: string = aiResult?.response ?? aiResult?.text ?? aiResult?.output_text ?? '';
+			return textResponse || 'I apologize, but I was unable to generate a response. Please try again.';
     } catch (error) {
       console.error('AI response generation failed:', error);
       
@@ -45,7 +46,7 @@ export class AIChatService {
     try {
       const prompt = SCAN_ANALYSIS_PROMPT(scanResults);
       
-      const response = await this.ai.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+			const aiResult: any = await this.ai.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast' as any, {
         messages: [
           {
             role: 'user',
@@ -56,7 +57,8 @@ export class AIChatService {
         temperature: 0.5
       });
 
-      return response.response || this.generateFallbackAnalysis(scanResults);
+			const textResponse: string = aiResult?.response ?? aiResult?.text ?? aiResult?.output_text ?? '';
+			return textResponse || this.generateFallbackAnalysis(scanResults);
     } catch (error) {
       console.error('AI scan analysis failed:', error);
       return this.generateFallbackAnalysis(scanResults);
