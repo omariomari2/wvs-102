@@ -1,6 +1,6 @@
 import { ScanResult, ChatMessage } from './types';
 
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'https://wvs-102.owusuomaribright.workers.dev';
 
 export class APIClient {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {

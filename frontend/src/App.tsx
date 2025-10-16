@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ScanResult, ChatMessage } from './types';
 import { api } from './api';
 import ScanForm from './components/ScanForm';
@@ -11,7 +11,7 @@ function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [currentScanId, setCurrentScanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   // Poll for scan updates
   useEffect(() => {
