@@ -68,6 +68,9 @@ export default {
   }
 };
 
+// Export Durable Object class so Wrangler can bind it
+export { ScanSession };
+
 async function handleScanRoutes(request: Request, env: Env, corsHeaders: Record<string, string>, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const path = url.pathname;
