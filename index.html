@@ -4,11 +4,61 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WVS 1.02</title>
-    <script type="module" crossorigin src="assets/index-BL42Rci5.js"></script>
-    <link rel="stylesheet" crossorigin href="assets/index-CDRr_73v.css">
+    <script type="module" crossorigin src="frontend/dist/assets/index-DUEzz2ea.js"></script>
+    <link rel="stylesheet" crossorigin href="frontend/dist/assets/index-CNIYmJjq.css">
   </head>
   <body>
     <div id="root"></div>
-
+    <style>
+      .message-content { white-space: pre-wrap; }
+      .card { border-radius: 20px; }
+      .message-content { border-radius: 14px; }
+      .scan-form input, .scan-form button { border-radius: 12px; }
+      .finding { border-radius: 16px; }
+      .severity { border-radius: 10px; }
+      .chat-container { border-radius: 16px; overflow: hidden; }
+      .chat-input input, .chat-input button { border-radius: 12px; }
+      .scan-status, .error { border-radius: 12px; }
+      .suggestion-button { border-radius: 12px; }
+    </style>
+    <script>
+      (function () {
+        function processMessageEl(el) {
+          if (!el || el.dataset && el.dataset.processed === "1") return;
+          var text = el.textContent || "";
+          var withRealNewlines = text.replace(/\\n/g, "\n");
+          var withBreaks = withRealNewlines.split("\n").map(function (line) {
+            return line === "" ? "<br>" : line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          }).join("<br>");
+          el.innerHTML = withBreaks;
+          el.dataset.processed = "1";
+        }
+        function scanAll() {
+          var nodes = document.querySelectorAll('.message-content');
+          nodes.forEach(processMessageEl);
+        }
+        var readyInterval = setInterval(function () {
+          var root = document.getElementById('root');
+          if (!root) return;
+          if (root.children && root.children.length > 0) {
+            clearInterval(readyInterval);
+            scanAll();
+          }
+        }, 300);
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            m.addedNodes && m.addedNodes.forEach(function (node) {
+              if (!(node instanceof Element)) return;
+              if (node.matches && node.matches('.message-content')) {
+                processMessageEl(node);
+              } else {
+                node.querySelectorAll && node.querySelectorAll('.message-content').forEach(processMessageEl);
+              }
+            });
+          });
+        });
+        observer.observe(document.documentElement, { subtree: true, childList: true });
+      })();
+    </script>
   </body>
-</html>
+  </html>
