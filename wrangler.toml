@@ -11,7 +11,7 @@ class_name = "ScanSession"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["ScanSession"]
+new_sqlite_classes = ["ScanSession"]
 
 [env.production]
 name = "ai-security-scanner-chat-prod"
