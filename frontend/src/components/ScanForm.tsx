@@ -17,7 +17,7 @@ const ScanForm: React.FC<ScanFormProps> = ({ onScan, isScanning }) => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '16px', color: '#333' }}>Start Security Scan</h2>
+      <h2 style={{ marginBottom: '16px' }}>Start Security Scan</h2>
       <form className="scan-form" onSubmit={handleSubmit}>
         <input
           type="url"
@@ -29,7 +29,6 @@ const ScanForm: React.FC<ScanFormProps> = ({ onScan, isScanning }) => {
         />
         <button
           type="submit"
-          className="btn btn-primary"
           disabled={isScanning || !url.trim()}
         >
           {isScanning ? (

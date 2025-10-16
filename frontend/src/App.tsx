@@ -89,18 +89,18 @@ function App() {
   return (
     <div className="container">
       <div className="header">
-        <h1>🔒 AI Security Scanner Chat</h1>
+        <h1>AI Security Scanner Chat</h1>
         <p>Scan websites for security vulnerabilities and chat with AI about the findings</p>
       </div>
 
       {error && (
-        <div className="card" style={{ background: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb' }}>
+        <div className="error">
           <strong>Error:</strong> {error}
           <button 
             onClick={() => setError(null)}
-            style={{ marginLeft: '10px', background: 'none', border: 'none', color: '#721c24', cursor: 'pointer' }}
+            style={{ marginLeft: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            ✕
+            [X]
           </button>
         </div>
       )}
