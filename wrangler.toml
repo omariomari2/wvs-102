@@ -9,7 +9,7 @@ binding = "AI"
 name = "SCAN_SESSION"
 class_name = "ScanSession"
 
-[[durable_objects.migrations]]
+[[migrations]]
 tag = "v1"
 new_classes = ["ScanSession"]
 
