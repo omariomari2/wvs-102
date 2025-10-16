@@ -1,0 +1,20 @@
+name = "wvs-102"
+main = "src/worker.ts"
+compatibility_date = "2024-01-15"
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "SCAN_SESSION"
+class_name = "ScanSession"
+
+[[durable_objects.migrations]]
+tag = "v1"
+new_classes = ["ScanSession"]
+
+[env.production]
+name = "ai-security-scanner-chat-prod"
+
+[env.staging]
+name = "ai-security-scanner-chat-staging"
