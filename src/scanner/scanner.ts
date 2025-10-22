@@ -1,8 +1,22 @@
 import { SecurityChecker } from './security-checks';
+import { ApifyCrawler } from './apify-crawler';
 import { ScanResult, SecurityFinding } from '../types';
 
 export class WebsiteScanner {
-  async scanWebsite(url: string): Promise<ScanResult> {
+  private apifyToken: string;
+
+  constructor(apifyToken?: string) {
+    this.apifyToken = apifyToken || '';
+  }
+
+  async scanWebsite(
+    url: string, 
+    options: { 
+      maxPages?: number; 
+      maxDepth?: number;
+      useProxy?: boolean;
+    } = {}
+  ): Promise<ScanResult> {
     const scanId = this.generateScanId();
     const timestamp = Date.now();
     
@@ -10,37 +24,56 @@ export class WebsiteScanner {
       // Validate URL
       const targetUrl = this.normalizeUrl(url);
       
-      // Fetch the website
-      const response = await fetch(targetUrl, {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'SecurityScanner/1.0',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        },
-        redirect: 'follow'
+      // Initialize the crawler with Apify configuration
+      const crawler = new ApifyCrawler({
+        maxPages: options.maxPages || 10,
+        maxDepth: options.maxDepth || 2,
+        useProxy: options.useProxy || false,
+        apifyToken: this.apifyToken
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      // Get HTML content
-      const html = await response.text();
+      const allFindings: SecurityFinding[] = [];
+      const securityChecker = new SecurityChecker(targetUrl, new Response(), '');
       
-      // Run security checks
-      const checker = new SecurityChecker(targetUrl, response, html);
-      const findings = await checker.runAllChecks();
+      // Start crawling
+      await crawler.crawl(targetUrl, async (currentUrl: string, html: string) => {
+        // Create a mock response for the security checker
+        const response = new Response(html, {
+          url: currentUrl,
+          status: 200,
+          headers: new Headers({
+            'Content-Type': 'text/html',
+          }),
+        });
+        
+        try {
+          // Update the security checker with the current page data
+          if (securityChecker.updateContext) {
+            securityChecker.updateContext(currentUrl, response, html);
+          }
+          
+          // Run security checks on the current page
+          const pageFindings = await securityChecker.runAllChecks();
+          allFindings.push(...pageFindings);
+          
+          return pageFindings;
+        } catch (error) {
+          console.error(`Error processing security checks for ${currentUrl}:`, error);
+          return [];
+        }
+      });
       
-      // Calculate summary
-      const summary = this.calculateSummary(findings);
+      // Calculate summary of all findings
+      const summary = this.calculateSummary(allFindings);
       
       return {
         id: scanId,
         url: targetUrl,
         timestamp,
         status: 'completed',
-        findings,
-        summary
+        findings: allFindings,
+        summary,
+        pagesScanned: allFindings.length > 0 ? new Set(allFindings.map(f => f.url || targetUrl)).size : 1
       };
       
     } catch (error) {
@@ -58,7 +91,13 @@ export class WebsiteScanner {
   }
 
   private generateScanId(): string {
-    return `scan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return Math.random().toString(36).substring(2, 15);
+  }
+  
+  private updateContext(url: string, response: Response, html: string) {
+    this.url = url;
+    this.response = response;
+    this.html = html;
   }
 
   private normalizeUrl(url: string): string {

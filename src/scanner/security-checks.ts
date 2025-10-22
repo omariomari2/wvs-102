@@ -11,6 +11,12 @@ export class SecurityChecker {
     this.html = html;
   }
 
+  updateContext(url: string, response: Response, html: string) {
+    this.url = url;
+    this.response = response;
+    this.html = html;
+  }
+
   async checkSecurityHeaders(): Promise<SecurityFinding[]> {
     const findings: SecurityFinding[] = [];
     const headers = this.response.headers;
