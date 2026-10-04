@@ -1,29 +1,31 @@
-# WVS 1.02 — System Update Overview
-### WVS 1.02 introduces a set of core architectural upgrades over version 1.01, focused on performance, modularity, and agentic capability.
+# WVS on Cloudflare
 
-____
+An experimental website scanner with a React chat interface and a Cloudflare Worker backend.
+A separate implementation from [WVS-1.01](https://github.com/omariomari2/WVS-1.01).
 
-# Key Changes
-## - Language Migration: 
-Rewritten from Python to TypeScript for improved type safety and better integration with modern web tooling.
+## Architecture
 
-## - Crawler Stack: 
-Replaced aiohttp modules with Apify crawlers, enabling scalable, fault-tolerant web automation.
+- TypeScript checks inspect response headers, HTTPS use, and page content.
+- Durable Objects hold scan sessions.
+- Workers AI supports explanations through the chat interface.
 
-## - Model Backend: 
-Transitioned from Gemini API endpoints to a locally hosted Llama 3.3 model, deployed via Cloudflare Workers for edge-native inference.
-Functional Enhancements
+## Develop locally
 
-## - Context Expansion: 
-Increased context window for longer, more coherent interactions.
+Install dependencies in the root and frontend directories:
 
-## - Memory State: 
-Durable memory layer added for persistent agent state across sessions.
+```sh
+npm install
+npm --prefix frontend install
+npm run dev
+```
 
-## - Interactive Chat: 
-Upgraded chat engine with multi-turn reasoning and agentic behavior.
+In another terminal, run `npm --prefix frontend run dev`.
+Check Worker bindings in `wrangler.toml` and the backend URL in `frontend/src/api.ts` first.
+AI calls can require a configured Cloudflare account.
 
-____
-WVS 1.02 is optimized for developers building autonomous agents, intelligent crawlers, and context-aware systems. This release focuses on modularity, local inference, and scalable deployment.
+## Limits
 
+Use only sites you own or have permission to assess.
+Checks are heuristics. They can produce false positives and do not establish that a site is secure.
+This version also tracks generated dependencies and build output; the repository needs cleanup before release.
 
